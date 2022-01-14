@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Astronomy Picture of the Day</string>
+    <string name="default_text">Здесь будет располагаться заголовок изображения</string>
+    <string name="picture_of_the_day">Фото дня</string>
 </resources>
