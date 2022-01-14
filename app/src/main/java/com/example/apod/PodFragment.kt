@@ -25,6 +25,8 @@ class PodFragment : Fragment(), PodContract.View {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         // Получаем presenter, сохранённый в методе onRetainCustomNonConfigurationInstance()
         // при пересоздании Activity. Если presenter = null, создаём его заново.
         // TODO: Что такое as с вопросительным знаком?

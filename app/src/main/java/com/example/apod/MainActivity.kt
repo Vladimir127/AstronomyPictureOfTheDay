@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 binding.toolbar.visibility = View.GONE
                 return@OnItemSelectedListener true
             } else {
-                loadFragment(PodFragment())
+                loadFragment(ListFragment())
                 binding.toolbar.visibility = View.VISIBLE
                 return@OnItemSelectedListener true
             }
