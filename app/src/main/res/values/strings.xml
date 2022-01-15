@@ -3,8 +3,8 @@
     <string name="default_text">Здесь будет располагаться заголовок изображения</string>
     <string name="picture_of_the_day">Фото дня</string>
     <string name="error_bad_link">Некорректная ссылка на изображение</string>
-    <string name="navigation_today">Сегодня</string>
-    <string name="navigation_wiki">Википедия</string>
+    <string name="navigation_pod">Фото дня</string>
+    <string name="navigation_ribbon">Лента</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
