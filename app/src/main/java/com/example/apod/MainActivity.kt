@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        initNightMode()
+        initNightModeAndTheme()
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -32,9 +32,10 @@ class MainActivity : AppCompatActivity() {
         chooseFragment(itemId)
     }
 
-    private fun initNightMode() {
+    private fun initNightModeAndTheme() {
         val sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(this)
+
         val nightMode: Boolean =
             sharedPreferences.getBoolean("night_mode", false)
         if (nightMode) {
@@ -44,6 +45,15 @@ class MainActivity : AppCompatActivity() {
                 AppCompatDelegate
                     .MODE_NIGHT_NO
             )
+        }
+
+        val color = sharedPreferences.getString("color", "blue")
+        if (color.equals("orange")){
+            setTheme(R.style.OrangeTheme)
+        } else if (color.equals("green")){
+            setTheme(R.style.GreenTheme)
+        } else {
+            setTheme(R.style.BlueTheme)
         }
     }
 

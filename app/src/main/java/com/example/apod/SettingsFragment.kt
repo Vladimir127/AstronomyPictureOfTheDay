@@ -14,7 +14,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
         rootKey: String?
     ) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+    }
 
+    override fun onResume() {
+        super.onResume()
+
+        // TODO: Если поставить здесь точку останова, то всё работает
+        //  нормально: каждый раз при изменении цвета и пересоздании активности
+        //  программа заходит сюда, регистрирует обработчик и снова ждёт
+        //  изменения цвета. Цвет на экране меняется. Если же точки останова
+        //  нет, то после третьего изменения цвета программа перестаёт сюда
+        //  заходить, обработчик не регистрируется, и при дальнейшем
+        //  изменении цвета на экране ничего не меняется.
+        registerChangeListener()
+    }
+
+    private fun registerChangeListener() {
         // Далее мы устанавливаем обработчик изменения настроек. Это нужно
         // для того, чтобы сразу после изменения некоторых настроек
         // (например, языка или цвета) сразу же изменился внешний вид самой
@@ -28,12 +43,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
                     if (isNightModeEnabled) {
                         AppCompatDelegate.setDefaultNightMode(
-                            AppCompatDelegate.MODE_NIGHT_YES)
-
+                            AppCompatDelegate.MODE_NIGHT_YES
+                        )
                     } else {
                         AppCompatDelegate.setDefaultNightMode(
-                            AppCompatDelegate.MODE_NIGHT_NO)
+                            AppCompatDelegate.MODE_NIGHT_NO
+                        )
                     }
+                }
+
+                if (key == "color") {
+                    activity?.recreate()
                 }
             }
 
