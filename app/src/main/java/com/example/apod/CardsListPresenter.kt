@@ -7,7 +7,7 @@ import retrofit2.Response
 class CardsListPresenter : CardsListContract.Presenter{
     private val retrofitImpl: PodRetrofitImpl = PodRetrofitImpl()
 
-    private val countEntries = 3
+    private val countEntries = 10
 
     private var view: CardsListContract.View? = null
 

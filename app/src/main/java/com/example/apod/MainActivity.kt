@@ -39,7 +39,10 @@ class MainActivity : AppCompatActivity() {
                 return@OnItemSelectedListener true
             } else {
                 loadFragment(CardsListFragment())
-                binding.toolbar.visibility = View.VISIBLE
+                binding.toolbar.apply {
+                    visibility = View.VISIBLE
+                    title = getString(R.string.navigation_ribbon)
+                }
                 return@OnItemSelectedListener true
             }
         })

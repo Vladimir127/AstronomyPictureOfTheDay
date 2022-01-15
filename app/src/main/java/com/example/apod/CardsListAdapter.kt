@@ -26,7 +26,7 @@ class CardsListAdapter : RecyclerView.Adapter<CardsListAdapter.ViewHolder>() {
     ): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_cards_list, parent, false)
+                .inflate(R.layout.item_card, parent, false)
                     as View
         )
     }
@@ -48,10 +48,9 @@ class CardsListAdapter : RecyclerView.Adapter<CardsListAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: PodServerResponseData) {
             itemView.apply {
-                findViewById<TextView>(R.id.title).text = item.title
-                findViewById<TextView>(R.id.description).text = item.explanation
-                findViewById<TextView>(R.id.date).text = item.date
-                findViewById<ImageView>(R.id.imageView).load(item.url) {
+                findViewById<TextView>(R.id.text_view_title).text = item.title
+                findViewById<TextView>(R.id.text_view_date).text = item.date
+                findViewById<ImageView>(R.id.image_view).load(item.url) {
                     //lifecycle()
                     error(R.drawable.ic_load_error)
                     //placeholder(R.drawable.ic_no_photo_vector)
