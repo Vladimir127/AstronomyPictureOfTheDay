@@ -4,14 +4,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ListPresenter : ListContract.Presenter{
+class CardsListPresenter : CardsListContract.Presenter{
     private val retrofitImpl: PodRetrofitImpl = PodRetrofitImpl()
 
     private val countEntries = 3
 
-    private var view: ListContract.View? = null
+    private var view: CardsListContract.View? = null
 
-    override fun attach(view: ListContract.View) {
+    override fun attach(view: CardsListContract.View) {
         this.view = view
     }
 

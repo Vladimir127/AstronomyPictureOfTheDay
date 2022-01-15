@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.apod.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationBarView
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 binding.toolbar.visibility = View.GONE
                 return@OnItemSelectedListener true
             } else {
-                loadFragment(ListFragment())
+                loadFragment(CardsListFragment())
                 binding.toolbar.visibility = View.VISIBLE
                 return@OnItemSelectedListener true
             }

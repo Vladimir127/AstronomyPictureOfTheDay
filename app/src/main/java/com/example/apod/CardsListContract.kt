@@ -3,7 +3,7 @@ package com.example.apod
 /**
  * Контракт взаимодействия Presenterа и View - фрагмент со списком карточек
  */
-class ListContract {
+class CardsListContract {
     interface View {
         fun showProgress()
         fun hideProgress()

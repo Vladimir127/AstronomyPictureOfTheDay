@@ -8,11 +8,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.apod.databinding.FragmentListBinding
 
-class ListFragment : Fragment(), ListContract.View {
+class CardsListFragment : Fragment(), CardsListContract.View {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var presenter: ListContract.Presenter
+    private lateinit var presenter: CardsListContract.Presenter
 
     private lateinit var cardsList: List<PodServerResponseData>
 
@@ -30,7 +30,7 @@ class ListFragment : Fragment(), ListContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.recyclerView.adapter = adapter
 
-        presenter = ListPresenter()
+        presenter = CardsListPresenter()
         presenter.attach(this)
         presenter.onCreate()
     }
