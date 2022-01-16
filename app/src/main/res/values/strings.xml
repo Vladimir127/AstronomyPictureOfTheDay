@@ -14,5 +14,6 @@
     <string name="header_view">Внешний вид</string>
     <string name="color_title">Цвет интерфейса</string>
     <string name="title_dark_mode">Тёмная тема</string>
+    <string name="cancel">Отмена</string>
 
 </resources>

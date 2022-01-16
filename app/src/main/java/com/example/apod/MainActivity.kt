@@ -10,7 +10,7 @@ import androidx.preference.PreferenceManager
 import com.example.apod.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationBarView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ColorDialogFragment.Contract {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,12 +48,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         val color = sharedPreferences.getString("color", "blue")
-        if (color.equals("orange")){
-            setTheme(R.style.OrangeTheme)
-        } else if (color.equals("green")){
-            setTheme(R.style.GreenTheme)
-        } else {
-            setTheme(R.style.BlueTheme)
+        when {
+            color.equals("orange") -> {
+                setTheme(R.style.OrangeTheme)
+            }
+            color.equals("green") -> {
+                setTheme(R.style.GreenTheme)
+            }
+            else -> {
+                setTheme(R.style.BlueTheme)
+            }
         }
     }
 
@@ -70,20 +74,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun chooseFragment(itemId: Int) {
-        if (itemId == R.id.navigation_pod) {
-            loadFragment(PodFragment())
-            binding.toolbar.visibility = View.GONE
-        } else if (itemId == R.id.navigation_wikipedia) {
-            loadFragment(CardsListFragment())
-            binding.toolbar.apply {
-                visibility = View.VISIBLE
-                title = getString(R.string.navigation_ribbon)
+        when (itemId) {
+            R.id.navigation_pod -> {
+                loadFragment(PodFragment())
+                binding.toolbar.visibility = View.GONE
             }
-        } else {
-            loadFragment(SettingsFragment())
-            binding.toolbar.apply {
-                visibility = View.VISIBLE
-                title = getString(R.string.navigation_settings)
+            R.id.navigation_wikipedia -> {
+                loadFragment(CardsListFragment())
+                binding.toolbar.apply {
+                    visibility = View.VISIBLE
+                    title = getString(R.string.navigation_ribbon)
+                }
+            }
+            else -> {
+                loadFragment(SettingsFragment())
+                binding.toolbar.apply {
+                    visibility = View.VISIBLE
+                    title = getString(R.string.navigation_settings)
+                }
             }
         }
     }
@@ -93,5 +101,12 @@ class MainActivity : AppCompatActivity() {
             R.id.container,
             fragment
         ).commitNow()
+    }
+
+    override fun changeColor(color: String){
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this)
+
+        sharedPreferences.edit().putString("color", color).apply()
     }
 }

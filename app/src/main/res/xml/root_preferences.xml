@@ -11,7 +11,7 @@
             app:title="@string/title_dark_mode"
             app:defaultValue="true"/>
 
-        <ListPreference
+        <com.example.apod.ColorPreference
             app:iconSpaceReserved="false"
             app:defaultValue="blue"
             app:entries="@array/color_entries"
