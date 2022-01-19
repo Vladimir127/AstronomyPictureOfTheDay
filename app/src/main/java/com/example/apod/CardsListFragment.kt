@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.apod.databinding.FragmentListBinding
 
 class CardsListFragment : Fragment(), CardsListContract.View {
@@ -18,6 +19,8 @@ class CardsListFragment : Fragment(), CardsListContract.View {
 
     private val adapter = CardsListAdapter()
 
+    private lateinit var scrollListener: RecyclerViewLoadMoreScroll
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,11 +31,31 @@ class CardsListFragment : Fragment(), CardsListContract.View {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.recyclerView.adapter = adapter
+        initRecyclerView()
 
         presenter = CardsListPresenter()
         presenter.attach(this)
         presenter.onCreate()
+    }
+
+    private fun initRecyclerView(){
+        binding.recyclerView.adapter = adapter
+
+        val layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.layoutManager = layoutManager
+
+        scrollListener = RecyclerViewLoadMoreScroll(layoutManager)
+        scrollListener.setOnLoadMoreListener(object : OnLoadMoreListener{
+            override fun onLoadMore() {
+                loadMoreData()
+            }
+        })
+        binding.recyclerView.addOnScrollListener(scrollListener)
+    }
+
+    fun loadMoreData(){
+        adapter.addLoadingView()
+        presenter.onScroll()
     }
 
     override fun onDestroyView() {
@@ -55,5 +78,11 @@ class CardsListFragment : Fragment(), CardsListContract.View {
     override fun renderData(data: List<PodServerResponseData>) {
         cardsList = data
         adapter.setData(data)
+    }
+
+    override fun addData(data: List<PodServerResponseData>) {
+        adapter.removeLoadingView()
+        adapter.addData(data)
+        scrollListener.setLoaded()
     }
 }

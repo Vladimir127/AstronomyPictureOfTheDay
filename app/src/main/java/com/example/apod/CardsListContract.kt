@@ -9,11 +9,13 @@ class CardsListContract {
         fun hideProgress()
         fun showError(error: String)
         fun renderData(data: List<PodServerResponseData>)
+        fun addData(data: List<PodServerResponseData>)
     }
 
     interface Presenter {
         fun attach(view: View)
         fun onCreate()
+        fun onScroll()
         fun detach()
     }
 }

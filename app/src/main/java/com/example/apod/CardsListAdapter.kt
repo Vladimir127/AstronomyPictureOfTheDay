@@ -8,16 +8,46 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.api.load
 
-class CardsListAdapter : RecyclerView.Adapter<CardsListAdapter.ViewHolder>() {
+const val VIEW_TYPE_ITEM = 0
+const val VIEW_TYPE_LOADING = 1
 
-    private var data: List<PodServerResponseData> = listOf()
+class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private var data: ArrayList<PodServerResponseData?> = ArrayList()
 
     fun setData(data: List<PodServerResponseData>) {
-        // При присвоении пришлось сразу же добавить сортировку по убыванию,
-        // так как API присылает данные шиворот-навыворот
-        this.data = data.sortedByDescending { it.date }
-
+        this.data = ArrayList(data)
         notifyDataSetChanged()
+    }
+
+    fun addData(data: List<PodServerResponseData?>) {
+        this.data.addAll(data)
+        notifyItemRangeInserted(this.data.size - 1, data.size)
+    }
+
+    fun addLoadingView() {
+        data.add(null)
+        notifyItemInserted(data.size - 1)
+    }
+
+    fun removeLoadingView() {
+        if (data.size != 0) {
+            data.removeAt(data.size - 1)
+            notifyItemRemoved(data.size)
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        // Теперь у нас могут быть пункты списка двух типов: непосредственно 
+        // объекты и колёсико ProgressBar, появляющееся на время загрузки, 
+        // когда мы пролистываем список до конца. Последний не содержит
+        // никаких данных, поэтому таким хитрым способом мы и определяем, что
+        // это пункт именно такого типа.
+        return if (data[position] == null) {
+            VIEW_TYPE_LOADING
+        } else {
+            VIEW_TYPE_ITEM
+        }
     }
 
     /**
@@ -26,19 +56,34 @@ class CardsListAdapter : RecyclerView.Adapter<CardsListAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ViewHolder {
-        return ViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_card, parent, false)
-                    as View
-        )
+    ): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_ITEM) {
+            ItemViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_card, parent, false)
+                        as View
+            )
+        } else {
+            LoadingViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.progress_loading, parent, false)
+                        as View
+            )
+        }
     }
 
     /**
      * В этом методе происходит заполнение пункта списка данными из источника
      */
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(data[position])
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder, position:
+        Int
+    ) {
+        // Привязку выполняем только в том случае, если это обычный пункт
+        // списка, так как в пункте с колёсиком привязывать нечего
+        if (holder.itemViewType == VIEW_TYPE_ITEM) {
+            (holder as ItemViewHolder).bind(data[position])
+        }
     }
 
     /**
@@ -48,12 +93,15 @@ class CardsListAdapter : RecyclerView.Adapter<CardsListAdapter.ViewHolder>() {
         return data.size
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: PodServerResponseData) {
+    /**
+     * ViewHolder для обычного пункта списка, содержащего непосредственно объект
+     */
+    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(item: PodServerResponseData?) {
             itemView.apply {
-                findViewById<TextView>(R.id.text_view_title).text = item.title
-                findViewById<TextView>(R.id.text_view_date).text = item.date
-                findViewById<ImageView>(R.id.image_view).load(item.url) {
+                findViewById<TextView>(R.id.text_view_title).text = item?.title
+                findViewById<TextView>(R.id.text_view_date).text = item?.date
+                findViewById<ImageView>(R.id.image_view).load(item?.url) {
                     //lifecycle()
                     error(R.drawable.ic_load_error)
                     //placeholder(R.drawable.ic_no_photo_vector)
@@ -61,4 +109,10 @@ class CardsListAdapter : RecyclerView.Adapter<CardsListAdapter.ViewHolder>() {
             }
         }
     }
+
+    /**
+     * ViewHolder для специального пункта списка, содержащего колёсико
+     * ProgressBar, которое будет отображаться внизу списка при загрузке данных
+     */
+    class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }
