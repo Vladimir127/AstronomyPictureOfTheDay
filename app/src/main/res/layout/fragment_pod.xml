@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/picture_of_the_day"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/picture_of_the_day" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_view"
@@ -26,12 +25,36 @@
         android:shadowDx="5"
         android:shadowDy="5"
         android:shadowRadius="5"
-        tools:text="@string/default_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/image_button_share"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@string/default_text" />
+
+    <ImageButton
+        android:id="@+id/image_button_share"
+        android:contentDescription="@string/share"
+        android:src="@drawable/ic_share_shadow"
+        app:layout_constraintBottom_toTopOf="@id/image_button_download"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        style="@style/ShadowImageButton" />
+
+    <ImageButton
+        android:id="@+id/image_button_download"
+        android:contentDescription="@string/save"
+        android:src="@drawable/ic_download_shadow"
+        app:layout_constraintBottom_toTopOf="@id/image_button_wallpaper"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/ShadowImageButton"/>
+
+    <ImageButton
+        android:id="@+id/image_button_wallpaper"
+        android:contentDescription="@string/set_as_wallpaper"
+        android:src="@drawable/ic_wallpaper_shadow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/ShadowImageButton" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -39,8 +62,8 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,5 +15,8 @@
     <string name="color_title">Цвет интерфейса</string>
     <string name="title_dark_mode">Тёмная тема</string>
     <string name="cancel">Отмена</string>
+    <string name="set_as_wallpaper">Установить как обои</string>
+    <string name="save">Сохранить</string>
+    <string name="share">Поделиться</string>
 
 </resources>
