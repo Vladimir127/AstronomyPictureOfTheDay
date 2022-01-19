@@ -3,11 +3,13 @@ package com.example.apod
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.*
 
-class CardsListPresenter : CardsListContract.Presenter{
+class CardsListPresenter : CardsListContract.Presenter {
     private val retrofitImpl: PodRetrofitImpl = PodRetrofitImpl()
 
-    private val countEntries = 10
+    private val countEntries = -9
 
     private var view: CardsListContract.View? = null
 
@@ -22,6 +24,14 @@ class CardsListPresenter : CardsListContract.Presenter{
     private fun sendServerRequest() {
         view?.showProgress()
 
+        val calendar = Calendar.getInstance()
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+
+        val endDate = simpleDateFormat.format(calendar.time)
+
+        calendar.add(Calendar.DAY_OF_YEAR, countEntries)
+        val startDate = simpleDateFormat.format(calendar.time)
+
         val apiKey: String = BuildConfig.NASA_API_KEY
         if (apiKey.isBlank()) {
             view?.showError("You need API key")
@@ -30,7 +40,8 @@ class CardsListPresenter : CardsListContract.Presenter{
             // для получения списка объектов и дальнейшего их отображения
             // в RecyclerView. Второй параметр - количество загружаемых объектов
             // TODO: Реализовать подгрузку карточек по мере пролистывания списка
-            retrofitImpl.getRetrofitImpl().getPicturesList(apiKey, countEntries)
+            retrofitImpl.getRetrofitImpl()
+                .getPicturesList(apiKey, startDate, endDate)
                 .enqueue(object :
                     Callback<List<PodServerResponseData>> {
 
@@ -59,7 +70,6 @@ class CardsListPresenter : CardsListContract.Presenter{
                         view?.hideProgress()
                     }
                 })
-
         }
     }
 

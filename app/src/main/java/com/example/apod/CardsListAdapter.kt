@@ -13,7 +13,10 @@ class CardsListAdapter : RecyclerView.Adapter<CardsListAdapter.ViewHolder>() {
     private var data: List<PodServerResponseData> = listOf()
 
     fun setData(data: List<PodServerResponseData>) {
-        this.data = data
+        // При присвоении пришлось сразу же добавить сортировку по убыванию,
+        // так как API присылает данные шиворот-навыворот
+        this.data = data.sortedByDescending { it.date }
+
         notifyDataSetChanged()
     }
 
