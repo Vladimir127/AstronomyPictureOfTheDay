@@ -10,6 +10,8 @@ import com.example.apod.databinding.FragmentListBinding
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CardsListFragment : Fragment(), CardsListContract.View {
     private var _binding: FragmentListBinding? = null
@@ -71,6 +73,25 @@ class CardsListFragment : Fragment(), CardsListContract.View {
             // Отключаем обработчик прокрутки, чтобы он не подгружал
             // дополнительные записи, когда у нас выбран диапазон
             scrollListener.isEnabled = false
+
+            // Формируем заголовок для чипса
+            val simpleDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.US)
+            val firstDateString = simpleDateFormat.format(firstDate)
+            val secondDateString = simpleDateFormat.format(secondDate)
+            val chipTitle = "Период: $firstDateString - $secondDateString"
+
+            // Настраиваем чипс
+            binding.chipDateRange.text = chipTitle
+            binding.chipDateRange.visibility = View.VISIBLE
+            binding.chipDateRange.setOnCloseIconClickListener { v ->
+
+                // При нажатии на иконку "Закрыть" скрываем чипс, заново
+                // запрашиваем все данные (как при первом открытии фрагмета),
+                // а также снова включаем обработчик прокрутки
+                v.visibility = View.GONE
+                presenter.onCreate()
+                scrollListener.isEnabled = true
+            }
 
             presenter.onDateRangeSelected(firstDate, secondDate)
         }
