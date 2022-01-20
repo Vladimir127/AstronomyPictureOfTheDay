@@ -55,6 +55,13 @@ class CardsListPresenter : CardsListContract.Presenter {
         sendServerRequest(startDate, endDate, false)
     }
 
+    override fun onDateRangeSelected(firstDateMillis: Long, secondDateMillis: Long) {
+        val startDate = simpleDateFormat.format(firstDateMillis)
+        val endDate = simpleDateFormat.format(secondDateMillis)
+
+        sendServerRequest(startDate, endDate, true)
+    }
+
     /**
      * Посылает на сервер запрос объектов за определённый период и отправляет
      * полученный результат во View

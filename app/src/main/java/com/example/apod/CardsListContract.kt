@@ -16,6 +16,7 @@ class CardsListContract {
         fun attach(view: View)
         fun onCreate()
         fun onScroll()
+        fun onDateRangeSelected(firstDateMillis: Long, secondDateMillis: Long)
         fun detach()
     }
 }
