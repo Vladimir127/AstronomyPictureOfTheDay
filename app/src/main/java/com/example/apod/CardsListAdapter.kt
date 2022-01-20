@@ -7,9 +7,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.api.load
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
-const val VIEW_TYPE_ITEM = 0
-const val VIEW_TYPE_LOADING = 1
+const val VIEW_TYPE_LOADING = 0
+const val VIEW_TYPE_IMAGE = 1
+const val VIEW_TYPE_VIDEO = 2
 
 class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -38,15 +41,22 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        // Теперь у нас могут быть пункты списка двух типов: непосредственно 
-        // объекты и колёсико ProgressBar, появляющееся на время загрузки, 
-        // когда мы пролистываем список до конца. Последний не содержит
-        // никаких данных, поэтому таким хитрым способом мы и определяем, что
-        // это пункт именно такого типа.
-        return if (data[position] == null) {
-            VIEW_TYPE_LOADING
-        } else {
-            VIEW_TYPE_ITEM
+        // Теперь у нас могут быть пункты списка трёх типов: фотографии, видео
+        // и колёсико ProgressBar, появляющееся на время загрузки, когда мы
+        // пролистываем список до конца. Сначала проверяем его: этот пункт
+        // списка не содержит никаких данных, поэтому таким хитрым способом мы
+        // и определяем, что это пункт именно такого типа. Если данные есть,
+        // то по полю mediaType мы определяем, фото это или видео.
+        return when {
+            data[position] == null -> {
+                VIEW_TYPE_LOADING
+            }
+            data[position]!!.mediaType.equals("video") -> { // TODO: в константу
+                VIEW_TYPE_VIDEO
+            }
+            else -> {
+                VIEW_TYPE_IMAGE
+            }
         }
     }
 
@@ -57,10 +67,16 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         parent: ViewGroup,
         viewType: Int
     ): RecyclerView.ViewHolder {
-        return if (viewType == VIEW_TYPE_ITEM) {
-            ItemViewHolder(
+        return if (viewType == VIEW_TYPE_IMAGE) {
+            ImageViewHolder(
                 LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_card, parent, false)
+                    .inflate(R.layout.item_card_image, parent, false)
+                        as View
+            )
+        } else if (viewType == VIEW_TYPE_VIDEO) {
+            VideoViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_card_video, parent, false)
                         as View
             )
         } else {
@@ -81,8 +97,10 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     ) {
         // Привязку выполняем только в том случае, если это обычный пункт
         // списка, так как в пункте с колёсиком привязывать нечего
-        if (holder.itemViewType == VIEW_TYPE_ITEM) {
-            (holder as ItemViewHolder).bind(data[position])
+        if (holder.itemViewType == VIEW_TYPE_IMAGE) {
+            (holder as ImageViewHolder).bind(data[position])
+        } else if (holder.itemViewType == VIEW_TYPE_VIDEO) {
+            (holder as VideoViewHolder).bind(data[position])
         }
     }
 
@@ -94,9 +112,9 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     /**
-     * ViewHolder для обычного пункта списка, содержащего непосредственно объект
+     * ViewHolder для обычного пункта списка, содержащего фото
      */
-    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: PodServerResponseData?) {
             itemView.apply {
                 findViewById<TextView>(R.id.text_view_title).text = item?.title
@@ -108,6 +126,60 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             }
         }
+    }
+
+    /**
+     * ViewHolder для обычного пункта списка, содержащего видео
+     */
+    class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(item: PodServerResponseData?) {
+            val videoId = getYouTubeId(item?.url!!) // TODO: Разобраться с null
+            val imageUrl = "https://img.youtube.com/vi/$videoId/0.jpg"
+
+            itemView.apply {
+                findViewById<TextView>(R.id.text_view_title).text = item.title
+                findViewById<TextView>(R.id.text_view_date).text = item.date
+                findViewById<ImageView>(R.id.image_view).load(imageUrl) {
+                    error(R.drawable.ic_load_error)
+                }
+            }
+        }
+
+        /**
+         * Получает ID видео с Ютуба для дальнейшего получения его обложки
+         * (thumbnail) и отображения её в списке. Например, для адреса
+         * "http://www.youtube.com/watch?v=0zM4nApSvMg" ID будет равен
+         * "0zM4nApSvMg". Метод скачан из интернета, использует регулярные выражения.
+         * @param youTubeUrl Ссылка на ролик на YouTube
+         * @return ID ролика
+         */
+        private fun getYouTubeId(youTubeUrl: String): String? {
+            val pattern =
+                "(?<=youtu.be/|watch\\?v=|/videos/|embed/)[^#&?]*"
+            val compiledPattern: Pattern = Pattern.compile(pattern)
+            val matcher: Matcher = compiledPattern.matcher(youTubeUrl)
+            return if (matcher.find()) {
+                matcher.group()
+            } else {
+                "error"
+            }
+        }
+
+        /*
+        // Ещё один метод для того же
+        public String extractYoutubeId(String url) throws MalformedURLException {
+            String query = new URL(url).getQuery();
+            String[] param = query.split("&");
+            String id = null;
+            for (String row : param) {
+                String[] param1 = row.split("=");
+                if (param1[0].equals("v")) {
+                    id = param1[1];
+                }
+            }
+            return id;
+        }
+         */
     }
 
     /**
