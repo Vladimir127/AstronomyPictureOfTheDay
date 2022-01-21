@@ -9,11 +9,6 @@
     <string name="search_wiki">Найти в Википедии</string>
     <string name="wiki_helper_text">Поищите термин в википедии</string>
     <string name="navigation_settings">Настройки</string>
-
-    <!-- Preferences -->
-    <string name="header_view">Внешний вид</string>
-    <string name="color_title">Цвет интерфейса</string>
-    <string name="title_dark_mode">Тёмная тема</string>
     <string name="cancel">Отмена</string>
     <string name="set_as_wallpaper">Установить как обои</string>
     <string name="save">Сохранить</string>
@@ -21,4 +16,21 @@
     <string name="select_range">Выбрать период</string>
     <string name="select_dates">Выберите даты</string>
 
+    <!-- Preferences -->
+    <string name="header_view">Внешний вид</string>
+    <string name="color_title">Цвет интерфейса</string>
+    <string name="title_dark_mode">Тёмная тема</string>
+
+    <!-- Слайдер-->
+    <string name="slide_1_title">Исследуйте космос</string>
+    <string name="slide_2_title">Оценивайте космические фото</string>
+    <string name="slide_3_title">Делитесь с друзьями</string>
+    <string name="slide_4_title">Космос в вашем смартфоне</string>
+
+    <string name="slide_1_description">Каждый день - новое фото или видео от профессионалов NASA</string>
+    <string name="slide_2_description">Любимые фотографии можно сохранить в избранном</string>
+    <string name="slide_3_description">Каждым изображением можно поделиться с друзьями - в любом месте, в любое время</string>
+    <string name="slide_4_description">Установите фото дня в качестве обоев</string>
+    <string name="start">Поехали!</string>
+    <string name="cosmos_image">Космическое изображение</string>
 </resources>

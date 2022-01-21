@@ -28,4 +28,7 @@
         <item>@color/green_500</item>
         <item>@color/blue_400</item>
     </array>
+
+    <color name="dot_light">#FFFFFF</color>
+    <color name="dot_dark">#80FFFFFF</color>
 </resources>
