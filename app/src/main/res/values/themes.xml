@@ -1,7 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.AstronomyPictureOfTheDay"
-        parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.AstronomyPictureOfTheDay" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blue_400</item>
         <item name="colorPrimaryVariant">@color/blue_400_dark</item>
@@ -28,21 +27,27 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="OrangeTheme"
-        parent="Theme.AstronomyPictureOfTheDay.NoActionBar">
+    <style name="OrangeTheme" parent="Theme.AstronomyPictureOfTheDay.NoActionBar">
         <item name="colorPrimary">@color/orange_500</item>
         <item name="colorPrimaryDark">@color/orange_500_dark</item>
     </style>
 
-    <style name="GreenTheme"
-        parent="Theme.AstronomyPictureOfTheDay.NoActionBar">
+    <style name="GreenTheme" parent="Theme.AstronomyPictureOfTheDay.NoActionBar">
         <item name="colorPrimary">@color/green_500</item>
         <item name="colorPrimaryDark">@color/green_500_dark</item>
     </style>
 
-    <style name="BlueTheme"
-        parent="Theme.AstronomyPictureOfTheDay.NoActionBar">
+    <style name="BlueTheme" parent="Theme.AstronomyPictureOfTheDay.NoActionBar">
         <item name="colorPrimary">@color/blue_400</item>
         <item name="colorPrimaryDark">@color/blue_400_dark</item>
     </style>
+
+    <style name="Theme.AstronomyPictureOfTheDay.NoActionBar.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.AstronomyPictureOfTheDay.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.AstronomyPictureOfTheDay.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
