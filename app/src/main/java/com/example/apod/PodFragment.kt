@@ -4,28 +4,38 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnticipateOvershootInterpolator
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
+import androidx.transition.ChangeBounds
+import androidx.transition.TransitionManager
 import coil.api.load
-import com.example.apod.databinding.FragmentPodBinding
+import com.example.apod.databinding.FragmentPodStartBinding
 
 class PodFragment : Fragment(), PodContract.View {
 
-    private var _binding: FragmentPodBinding? = null
+    private var _binding: FragmentPodStartBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var presenter: PodContract.Presenter
+
+    /** Флаг, определяющий, показывать текст или скрывать */
+    private var show = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPodBinding.inflate(inflater, container, false)
+        _binding = FragmentPodStartBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.imageView.setOnClickListener{ if (show) hideComponents() else
+            showComponents() }
 
         // Получаем presenter, сохранённый в методе onRetainCustomNonConfigurationInstance()
         // при пересоздании Activity. Если presenter = null, создаём его заново.
@@ -40,6 +50,46 @@ class PodFragment : Fragment(), PodContract.View {
         presenter = PodPresenter()
         presenter.attach(this)
         presenter.onCreate()
+    }
+
+    private fun showComponents(){
+        show = true
+
+        // Создаём ConstraintSet - этот класс позволяет
+        // программно создавать ограничения для ConstraintLayout
+        val constraintSet = ConstraintSet()
+
+        // Метод clone копирует ограничения из данного макета.
+        // То есть тут мы считываем ограничения из конечного макета и записываем их в этот набор.
+        constraintSet.clone(context, R.layout.fragment_pod_end)
+
+        // Создаём переход типа ChangeBounds (перемещение объектов),
+        // устанавливаем ему длительность и интерполятор.
+        // AnticipateOvershootInterpolator позволяет добиться анимации отскока
+        val transition = ChangeBounds()
+        transition.interpolator = AnticipateOvershootInterpolator(1.0f)
+        transition.duration = 1200
+
+        // Как обычно, запускаем анимацию.
+        TransitionManager.beginDelayedTransition(binding.constraintContainer, transition)
+
+        // А теперь берём этот конечный набор ограничений
+        // и применяем его к начальному контейнеру.
+        constraintSet.applyTo(binding.constraintContainer)
+    }
+
+    private fun hideComponents(){
+        show = false
+
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(context, R.layout.fragment_pod_start)
+
+        val transition = ChangeBounds()
+        transition.interpolator = AnticipateOvershootInterpolator(1.0f)
+        transition.duration = 1200
+
+        TransitionManager.beginDelayedTransition(binding.constraintContainer, transition)
+        constraintSet.applyTo(binding.constraintContainer)
     }
 
     override fun onDestroyView() {
@@ -75,6 +125,15 @@ class PodFragment : Fragment(), PodContract.View {
 
         val title = serverResponseData.title
 
-        binding.textView.text = title
+        binding.textViewTitle.text = title
+
+        if (serverResponseData.copyright.isNullOrEmpty()) {
+            binding.textViewAuthor.text = getString(R.string.app_name)
+        } else {
+            binding.textViewAuthor.text = serverResponseData.copyright
+        }
+
+        binding.textViewDescription.text = serverResponseData.explanation
+        binding.textViewDate.text = serverResponseData.date
     }
 }
