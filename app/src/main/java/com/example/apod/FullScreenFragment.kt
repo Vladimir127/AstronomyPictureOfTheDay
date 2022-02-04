@@ -7,8 +7,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import coil.api.load
 import com.example.apod.databinding.FragmentFullScreenBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 private const val ARG_TITLE = "title"
 private const val ARG_URL = "url"
@@ -19,6 +23,8 @@ class FullScreenFragment : Fragment() {
 
     private var _binding: FragmentFullScreenBinding? = null
     private val binding get() = _binding!!
+
+    private var systemBarsHidden = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +49,28 @@ class FullScreenFragment : Fragment() {
         binding.imageView.load(url){
             error(R.drawable.ic_load_error)
         }
+
+        binding.imageView.setOnClickListener{
+            toggleSystemBars(view)
+        }
+    }
+
+    private fun toggleSystemBars(view: View) {
+        val windowInsetsController =
+            ViewCompat.getWindowInsetsController(view) ?: return
+
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        if (systemBarsHidden) {
+            windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+            binding.toolbar.visibility = View.VISIBLE
+        } else {
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+            binding.toolbar.visibility = View.GONE
+        }
+
+        systemBarsHidden = !systemBarsHidden
     }
 
     private fun initToolbar() {
@@ -64,6 +92,9 @@ class FullScreenFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.navigation)
+        bottomNavigationView?.visibility = View.VISIBLE
     }
 
     companion object {

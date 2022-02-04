@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import coil.api.load
 import com.example.apod.databinding.FragmentDetailBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 private const val ARG_TITLE = "title"
 private const val ARG_DESCRIPTION = "description"
@@ -47,6 +48,9 @@ class DetailFragment : Fragment() {
         }
 
         binding.expandedImage.setOnClickListener{
+            val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.navigation)
+            bottomNavigationView?.visibility = View.GONE
+
             val fragment = FullScreenFragment.newInstance(title, url)
 
             activity?.
