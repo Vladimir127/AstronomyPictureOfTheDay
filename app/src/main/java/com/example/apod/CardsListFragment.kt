@@ -1,5 +1,6 @@
 package com.example.apod
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -115,20 +116,14 @@ class CardsListFragment : Fragment(), CardsListContract.View {
         adapter.setOnItemClickListener(object : CardsListAdapter
         .OnItemClickListener{
             override fun onItemClick(item: PodServerResponseData?) {
-                /*val intent = Intent(context, DetailActivity::class.java)
-                intent.putExtra("title", item?.title)   // TODO: Вынести в константы
-                intent.putExtra("description", item?.explanation)
-                intent.putExtra("url", item?.url)
-
-                startActivity(intent)*/
-
                 val fragment = DetailFragment.newInstance(item?.title,
                     item?.explanation, item?.url)
 
-                activity?.supportFragmentManager?.beginTransaction()?.replace(
-                    R.id.container,
-                    fragment
-                )?.commitNow()
+                activity?.
+                supportFragmentManager?.
+                beginTransaction()?.
+                addToBackStack(null)?.
+                replace(R.id.container, fragment)?.commit()
             }
         })
 

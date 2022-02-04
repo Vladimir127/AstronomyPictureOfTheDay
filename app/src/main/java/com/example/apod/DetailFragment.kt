@@ -39,11 +39,21 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarLayout.title = arguments?.getString(ARG_TITLE)
-        binding.detailContainer.textViewDescription.text = arguments?.getString(ARG_DESCRIPTION)
+        binding.toolbarLayout.title = title
+        binding.detailContainer.textViewDescription.text = description
 
-        binding.expandedImage.load(arguments?.getString(ARG_URL)){
+        binding.expandedImage.load(url){
             error(R.drawable.ic_load_error)
+        }
+
+        binding.expandedImage.setOnClickListener{
+            val fragment = FullScreenFragment.newInstance(title, url)
+
+            activity?.
+            supportFragmentManager?.
+            beginTransaction()?.
+            addToBackStack(null)?.
+            replace(R.id.container, fragment)?.commit()
         }
 
         initToolBar()
@@ -83,7 +93,6 @@ class DetailFragment : Fragment() {
          * @param url Ссылка на изображение
          * @return Новый экземпляр фрагмента DetailFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(title: String?, description: String?, url: String?) =
             DetailFragment().apply {
