@@ -117,8 +117,30 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
         maxScale = x;
     }
 
+    // Всё это безобразие создано для того, чтобы фрагмент снаружи мог
+    // отличать одинарное касание от двойного: по одинарному касанию
+    // скрываются/отображаются нижние и верхние панели, а по двойному -
+    // увеличивается/уменьшается масштаб. Если просто установить элементу
+    // ImageView onClickListener, то каждый раз при двойном касании будет не
+    // только изменяться масштаб, но и отображаться/скрываться панели, а нам
+    // это не нужно.
+    interface OnSingleTapConfirmedListener {
+        void onSingleTapConfirmed();
+    }
+
+    private OnSingleTapConfirmedListener onSingleTapConfirmedListener;
+
+    public void setOnSingleTapConfirmedListener(OnSingleTapConfirmedListener value){
+        onSingleTapConfirmedListener = value;
+    }
+
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
+        if (onSingleTapConfirmedListener != null){
+            onSingleTapConfirmedListener.onSingleTapConfirmed();
+            return true;
+        }
+
         return false;
     }
 
