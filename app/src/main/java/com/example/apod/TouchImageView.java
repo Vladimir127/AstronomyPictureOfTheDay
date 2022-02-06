@@ -1,5 +1,6 @@
 package com.example.apod;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -10,6 +11,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+
+import java.util.Arrays;
 
 public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
 
@@ -37,6 +40,8 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     ScaleGestureDetector mScaleDetector;
 
     Context context;
+
+    private ValueAnimator mValueAnimator;
 
     public TouchImageView(Context context) {
         super(context);
@@ -111,6 +116,10 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
             }
 
         });
+
+        // Init value animator
+        mValueAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mValueAnimator.setDuration(500);
     }
 
     public void setMaxZoom(float x) {
@@ -148,6 +157,17 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     public boolean onDoubleTap(MotionEvent e) {
         // Double tap is detected
         Log.i("MAIN_TAG", "Double tap detected");
+
+        // Cancel value animator if its running
+        if (mValueAnimator != null && mValueAnimator.isRunning()) {
+            mValueAnimator.cancel();
+            mValueAnimator.removeAllUpdateListeners();
+        }
+
+        Matrix srcMatrix = getImageMatrix();
+        final float[] srcValues = new float[9], destValues = new float[9];
+        srcMatrix.getValues(srcValues);
+
         float origScale = saveScale;
         float mScaleFactor;
 
@@ -163,6 +183,34 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
                 viewHeight / 2);
 
         fixTrans();
+
+        matrix.getValues(destValues);
+
+
+        // Get translation values
+        final float transX = destValues[2] - srcValues[2];
+        final float transY = destValues[5] - srcValues[5];
+        final float scaleX = destValues[0] - srcValues[0];
+        final float scaleY = destValues[4] - srcValues[4];
+
+        // Listen to value animator changes
+        mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = animation.getAnimatedFraction();
+                float[] currValues = Arrays.copyOf(srcValues, srcValues.length);
+                currValues[2] = srcValues[2] + transX * value;
+                currValues[5] = srcValues[5] + transY * value;
+                currValues[0] = srcValues[0] + scaleX * value;
+                currValues[4] = srcValues[4] + scaleY * value;
+                Matrix matrix = new Matrix();
+                matrix.setValues(currValues);
+                setImageMatrix(matrix);
+            }
+        });
+
+        mValueAnimator.start();
+
         return false;
     }
 
