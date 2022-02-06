@@ -1,11 +1,12 @@
 package com.example.apod
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.apod.databinding.FragmentListBinding
@@ -108,6 +109,8 @@ class CardsListFragment : Fragment(), CardsListContract.View {
         presenter = CardsListPresenter()
         presenter.attach(this)
         presenter.onCreate()
+
+        postponeEnterTransition()
     }
 
     private fun initRecyclerView(){
@@ -115,13 +118,14 @@ class CardsListFragment : Fragment(), CardsListContract.View {
         binding.recyclerView.adapter = adapter
         adapter.setOnItemClickListener(object : CardsListAdapter
         .OnItemClickListener{
-            override fun onItemClick(item: PodServerResponseData?) {
+            override fun onItemClick(item: PodServerResponseData?, imageView: ImageView) {
                 val fragment = DetailFragment.newInstance(item?.title,
                     item?.explanation, item?.url)
 
                 activity?.
                 supportFragmentManager?.
                 beginTransaction()?.
+                addSharedElement(imageView, "transition_image")?.
                 addToBackStack(null)?.
                 replace(R.id.container, fragment)?.commit()
             }
@@ -172,6 +176,10 @@ class CardsListFragment : Fragment(), CardsListContract.View {
     override fun renderData(data: List<PodServerResponseData>) {
         cardsList = data
         adapter.setData(data)
+
+        (view?.parent as? ViewGroup)?.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
     }
 
     override fun addData(data: List<PodServerResponseData>) {

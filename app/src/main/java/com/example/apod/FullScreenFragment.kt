@@ -1,11 +1,9 @@
 package com.example.apod
 
 import android.os.Bundle
+import android.transition.TransitionInflater
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -32,10 +30,13 @@ class FullScreenFragment : Fragment() {
             title = it.getString(ARG_TITLE)
             url = it.getString(ARG_URL)
         }
+
+        sharedElementEnterTransition = TransitionInflater.from(requireContext
+            ()).inflateTransition(R.transition.shared_image)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         _binding = FragmentFullScreenBinding.inflate(inflater, container,
             false)
         initToolbar()
@@ -46,13 +47,16 @@ class FullScreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.imageView.load(url){
-            error(R.drawable.ic_load_error)
-        }
+        binding.imageView.apply {
+            load(url) {
+                error(R.drawable.ic_load_error)
+            }
 
-        binding.imageView.setOnClickListener{
-            toggleSystemBars(view)
+            setOnSingleTapConfirmedListener {
+                toggleSystemBars(view)
+            }
         }
+        ViewCompat.setTransitionName(binding.imageView, "transition_image")
     }
 
     private fun toggleSystemBars(view: View) {

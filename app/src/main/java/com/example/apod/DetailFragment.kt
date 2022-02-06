@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.transition.TransitionInflater
 import coil.api.load
 import com.example.apod.databinding.FragmentDetailBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -27,6 +28,11 @@ class DetailFragment : Fragment() {
             description = it.getString(ARG_DESCRIPTION)
             url = it.getString(ARG_URL)
         }
+
+        postponeEnterTransition()
+
+        sharedElementEnterTransition = TransitionInflater.from(requireContext())
+            .inflateTransition(R.transition.shared_image)
     }
 
     override fun onCreateView(
@@ -43,21 +49,30 @@ class DetailFragment : Fragment() {
         binding.toolbarLayout.title = title
         binding.detailContainer.textViewDescription.text = description
 
-        binding.expandedImage.load(url){
-            error(R.drawable.ic_load_error)
-        }
+        binding.expandedImage.transitionName = "transition_image"
 
-        binding.expandedImage.setOnClickListener{
-            val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.navigation)
-            bottomNavigationView?.visibility = View.GONE
+        binding.expandedImage.apply {
+            load(url){
+                error(R.drawable.ic_load_error)
+                listener (
+                    onError = { _, _ -> startPostponedEnterTransition() },
+                    onSuccess = { _, _ -> startPostponedEnterTransition() }
+                )
+            }
 
-            val fragment = FullScreenFragment.newInstance(title, url)
+            setOnClickListener{
+                val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.navigation)
+                bottomNavigationView?.visibility = View.GONE
 
-            activity?.
-            supportFragmentManager?.
-            beginTransaction()?.
-            addToBackStack(null)?.
-            replace(R.id.container, fragment)?.commit()
+                val fragment = FullScreenFragment.newInstance(title, url)
+
+                activity?.
+                supportFragmentManager?.
+                beginTransaction()?.
+                addToBackStack(null)?.
+                addSharedElement(it, "transition_image")?.
+                replace(R.id.container, fragment)?.commit()
+            }
         }
 
         initToolBar()
