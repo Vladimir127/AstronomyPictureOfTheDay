@@ -119,8 +119,7 @@ class CardsListFragment : Fragment(), CardsListContract.View {
         adapter.setOnItemClickListener(object : CardsListAdapter
         .OnItemClickListener{
             override fun onItemClick(item: PodServerResponseData?, imageView: ImageView) {
-                val fragment = DetailFragment.newInstance(item?.title,
-                    item?.explanation, item?.url)
+                val fragment = DetailFragment.newInstance(item)
 
                 activity?.
                 supportFragmentManager?.

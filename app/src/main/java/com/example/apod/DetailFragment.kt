@@ -9,14 +9,10 @@ import coil.api.load
 import com.example.apod.databinding.FragmentDetailBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-private const val ARG_TITLE = "title"
-private const val ARG_DESCRIPTION = "description"
-private const val ARG_URL = "url"
+private const val ARG_POD_DATA = "podData"
 
 class DetailFragment : Fragment() {
-    private var title: String? = null
-    private var description: String? = null
-    private var url: String? = null
+    private var podData: PodServerResponseData? = null
 
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
@@ -24,9 +20,7 @@ class DetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            title = it.getString(ARG_TITLE)
-            description = it.getString(ARG_DESCRIPTION)
-            url = it.getString(ARG_URL)
+            podData = it.getParcelable(ARG_POD_DATA)
         }
 
         postponeEnterTransition()
@@ -46,13 +40,13 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarLayout.title = title
-        binding.detailContainer.textViewDescription.text = description
+        binding.toolbarLayout.title = podData?.title
+        binding.detailContainer.textViewDescription.text = podData?.explanation
 
         binding.expandedImage.transitionName = "transition_image"
 
         binding.expandedImage.apply {
-            load(url){
+            load(podData?.url){
                 error(R.drawable.ic_load_error)
                 listener (
                     onError = { _, _ -> startPostponedEnterTransition() },
@@ -64,7 +58,8 @@ class DetailFragment : Fragment() {
                 val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.navigation)
                 bottomNavigationView?.visibility = View.GONE
 
-                val fragment = FullScreenFragment.newInstance(title, url)
+                val fragment = FullScreenFragment.newInstance(podData?.title,
+                podData?.hdurl)
 
                 activity?.
                 supportFragmentManager?.
@@ -93,6 +88,9 @@ class DetailFragment : Fragment() {
         if (item.itemId == android.R.id.home){
             activity?.onBackPressed()
             return true
+        } else if (item.itemId == R.id.action_share) {
+            Utils.share(requireContext(), resources, podData)
+            return true
         }
         return super.onOptionsItemSelected(item)
     }
@@ -107,18 +105,14 @@ class DetailFragment : Fragment() {
         /**
          * Используется для создания экземпляра фрагмента с параметрами
          *
-         * @param title Заголовок записи (название изображения)
-         * @param description Описание изображения
-         * @param url Ссылка на изображение
+         * @param item Выбранная запись
          * @return Новый экземпляр фрагмента DetailFragment.
          */
         @JvmStatic
-        fun newInstance(title: String?, description: String?, url: String?) =
+        fun newInstance(item: PodServerResponseData?) =
             DetailFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_TITLE, title)
-                    putString(ARG_DESCRIPTION, description)
-                    putString(ARG_URL, url)
+                    putParcelable(ARG_POD_DATA, item)
                 }
             }
     }

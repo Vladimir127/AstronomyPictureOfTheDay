@@ -23,6 +23,9 @@ class PodFragment : Fragment(), PodContract.View {
     /** Флаг, определяющий, показывать текст или скрывать */
     private var show = false
 
+    /** Текущая запись о сегодняшнем фото дня */
+    private lateinit var podData: PodServerResponseData
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,8 +37,14 @@ class PodFragment : Fragment(), PodContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.imageView.setOnClickListener{ if (show) hideComponents() else
-            showComponents() }
+        binding.imageView.setOnClickListener {
+            if (show) hideComponents() else
+                showComponents()
+        }
+
+        binding.imageButtonShare.setOnClickListener {
+            Utils.share(requireContext(), resources, podData)
+        }
 
         // Получаем presenter, сохранённый в методе onRetainCustomNonConfigurationInstance()
         // при пересоздании Activity. Если presenter = null, создаём его заново.
@@ -52,7 +61,7 @@ class PodFragment : Fragment(), PodContract.View {
         presenter.onCreate()
     }
 
-    private fun showComponents(){
+    private fun showComponents() {
         show = true
 
         // Создаём ConstraintSet - этот класс позволяет
@@ -71,14 +80,17 @@ class PodFragment : Fragment(), PodContract.View {
         transition.duration = 1200
 
         // Как обычно, запускаем анимацию.
-        TransitionManager.beginDelayedTransition(binding.constraintContainer, transition)
+        TransitionManager.beginDelayedTransition(
+            binding.constraintContainer,
+            transition
+        )
 
         // А теперь берём этот конечный набор ограничений
         // и применяем его к начальному контейнеру.
         constraintSet.applyTo(binding.constraintContainer)
     }
 
-    private fun hideComponents(){
+    private fun hideComponents() {
         show = false
 
         val constraintSet = ConstraintSet()
@@ -88,7 +100,10 @@ class PodFragment : Fragment(), PodContract.View {
         transition.interpolator = AnticipateOvershootInterpolator(1.0f)
         transition.duration = 1200
 
-        TransitionManager.beginDelayedTransition(binding.constraintContainer, transition)
+        TransitionManager.beginDelayedTransition(
+            binding.constraintContainer,
+            transition
+        )
         constraintSet.applyTo(binding.constraintContainer)
     }
 
@@ -110,17 +125,19 @@ class PodFragment : Fragment(), PodContract.View {
     }
 
     override fun renderData(serverResponseData: PodServerResponseData) {
-        val url = serverResponseData.hdurl
+        podData = serverResponseData
+
+        val url = serverResponseData.url
         if (url.isNullOrEmpty()) {
             showError(getString(R.string.error_bad_link))
         } else {
             //Coil в работе: достаточно вызвать у нашего ImageView
             //нужную extension-функцию и передать ссылку и заглушки для placeholder
             binding.imageView.load(url) {
-                    lifecycle(lifecycle)
-                    error(R.drawable.ic_load_error)
-                    //placeholder(R.drawable.ic_no_photo_vector)
-                }
+                lifecycle(lifecycle)
+                error(R.drawable.ic_load_error)
+                //placeholder(R.drawable.ic_no_photo_vector)
+            }
         }
 
         val title = serverResponseData.title
