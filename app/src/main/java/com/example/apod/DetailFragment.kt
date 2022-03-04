@@ -1,8 +1,13 @@
 package com.example.apod
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionInflater
 import coil.api.load
@@ -46,27 +51,28 @@ class DetailFragment : Fragment() {
         binding.expandedImage.transitionName = "transition_image"
 
         binding.expandedImage.apply {
-            load(podData?.url){
+            load(podData?.url) {
                 error(R.drawable.ic_load_error)
-                listener (
+                listener(
                     onError = { _, _ -> startPostponedEnterTransition() },
                     onSuccess = { _, _ -> startPostponedEnterTransition() }
                 )
             }
 
-            setOnClickListener{
-                val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.navigation)
+            setOnClickListener {
+                val bottomNavigationView =
+                    activity?.findViewById<BottomNavigationView>(R.id.navigation)
                 bottomNavigationView?.visibility = View.GONE
 
-                val fragment = FullScreenFragment.newInstance(podData?.title,
-                podData?.hdurl)
+                val fragment = FullScreenFragment.newInstance(
+                    podData?.title,
+                    podData?.hdurl
+                )
 
-                activity?.
-                supportFragmentManager?.
-                beginTransaction()?.
-                addToBackStack(null)?.
-                addSharedElement(it, "transition_image")?.
-                replace(R.id.container, fragment)?.commit()
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.addToBackStack(null)
+                    ?.addSharedElement(it, "transition_image")
+                    ?.replace(R.id.container, fragment)?.commit()
             }
         }
 
@@ -75,8 +81,12 @@ class DetailFragment : Fragment() {
 
     private fun initToolBar() {
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(
+            true
+        )
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(
+            true
+        )
         setHasOptionsMenu(true)
     }
 
@@ -85,14 +95,102 @@ class DetailFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home){
+        if (item.itemId == android.R.id.home) {
             activity?.onBackPressed()
             return true
         } else if (item.itemId == R.id.action_share) {
             Utils.share(requireContext(), resources, podData)
             return true
+        } else if (item.itemId == R.id.action_download) {
+            checkPermission()
+            return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    /**
+     * Проверяет разрешения для загрузки изображений. При необходимости
+     * запрашивает их. Если разрешения получены, загружает изображения.
+     */
+    private fun checkPermission() {
+        val activity = requireActivity() as MainActivity
+
+        activity.let {
+            when {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED -> {
+
+                    //Доступ к хранилищу на телефоне есть, загружаем изображение
+                    Utils.download(podData)
+                }
+
+                // Отобразим пояснение перед запросом разрешения
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) -> {
+                    AlertDialog.Builder(it)
+                        .setTitle(getString(R.string.title_access_storage))
+                        .setMessage(
+                            getString(R.string.text_access_storage_explanation)
+                        )
+                        .setPositiveButton(getString(R.string.dialog_acess_storage_allow)) { _, _ ->
+                            requestPermission()
+                        }
+                        .setNegativeButton(getString(R.string.dialog_access_storage_deny)) { dialog, _ -> dialog.dismiss() }
+                        .create()
+                        .show()
+                }
+                else -> {
+                    //Запрашиваем разрешение
+                    requestPermission()
+                }
+            }
+        }
+    }
+
+    /**
+     * Запрашивает разрешения на запись в хранилище
+     */
+    private fun requestPermission() {
+        requestPermissions(
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            REQUEST_CODE
+        )
+    }
+
+    /**
+     * Обратный вызов после получения разрешений от пользователя
+     */
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_CODE -> {
+                // Проверяем, дано ли пользователем разрешение по нашему
+                // запросу. Если дано, загружаем изображение
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Utils.download(podData)
+                } else {
+                    // Если пользователь не дал разрешения, поясняем, что
+                    // скачать изображение не получится
+                    context?.let {
+                        AlertDialog.Builder(it)
+                            .setTitle(getString(R.string.title_access_storage))
+                            .setMessage(
+                                getString(R.string.text_access_storage_denied)
+                            )
+                            .setNegativeButton(getString(R.string.dialog_close)) { dialog, _ -> dialog.dismiss() }
+                            .create()
+                            .show()
+                    }
+                }
+                return
+            }
+        }
     }
 
     override fun onDestroyView() {

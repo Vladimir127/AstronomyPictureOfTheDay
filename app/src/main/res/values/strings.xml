@@ -177,4 +177,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="show_description">Показать описание</string>
+    <string name="title_access_storage">Доступ к хранилищу</string>
+    <string name="text_access_storage_denied">\"Вы не сможете сохранить фото дня, поскольку у приложения нет доступа к хранилищу"</string>
+    <string name="dialog_close">Закрыть</string>
+    <string name="text_access_storage_explanation">Чтобы скачивать изображения, пожалуйста, предоставьте приложению доступ к хранилищу</string>
+    <string name="dialog_acess_storage_allow">Предоставить доступ</string>
+    <string name="dialog_access_storage_deny">Не надо</string>
 </resources>

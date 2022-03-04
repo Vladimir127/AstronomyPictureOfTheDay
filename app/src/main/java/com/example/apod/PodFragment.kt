@@ -1,5 +1,8 @@
 package com.example.apod
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +10,8 @@ import android.view.ViewGroup
 import android.view.animation.AnticipateOvershootInterpolator
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
@@ -46,6 +51,10 @@ class PodFragment : Fragment(), PodContract.View {
             Utils.share(requireContext(), resources, podData)
         }
 
+        binding.imageButtonDownload.setOnClickListener {
+            checkPermission()
+        }
+
         // Получаем presenter, сохранённый в методе onRetainCustomNonConfigurationInstance()
         // при пересоздании Activity. Если presenter = null, создаём его заново.
         // TODO: Что такое as с вопросительным знаком?
@@ -59,6 +68,91 @@ class PodFragment : Fragment(), PodContract.View {
         presenter = PodPresenter()
         presenter.attach(this)
         presenter.onCreate()
+    }
+
+    /**
+     * Проверяет разрешения для загрузки изображений. При необходимости
+     * запрашивает их. Если разрешения получены, загружает изображения.
+     */
+    private fun checkPermission() {
+        val activity = requireActivity() as MainActivity
+
+        activity.let {
+            when {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED -> {
+
+                    //Доступ к хранилищу на телефоне есть, загружаем изображение
+                    Utils.download(podData)
+                }
+
+                // Отобразим пояснение перед запросом разрешения
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) -> {
+                    AlertDialog.Builder(it)
+                        .setTitle(getString(R.string.title_access_storage))
+                        .setMessage(
+                            getString(R.string.text_access_storage_explanation)
+                        )
+                        .setPositiveButton(getString(R.string.dialog_acess_storage_allow)) { _, _ ->
+                            requestPermission()
+                        }
+                        .setNegativeButton(getString(R.string.dialog_access_storage_deny)) { dialog, _ -> dialog.dismiss() }
+                        .create()
+                        .show()
+                }
+                else -> {
+                    //Запрашиваем разрешение
+                    requestPermission()
+                }
+            }
+        }
+    }
+
+    /**
+     * Запрашивает разрешения на запись в хранилище
+     */
+    private fun requestPermission() {
+        requestPermissions(
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            REQUEST_CODE
+        )
+    }
+
+    /**
+     * Обратный вызов после получения разрешений от пользователя
+     */
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_CODE -> {
+                // Проверяем, дано ли пользователем разрешение по нашему
+                // запросу. Если дано, загружаем изображение
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Utils.download(podData)
+                } else {
+                    // Если пользователь не дал разрешения, поясняем, что
+                    // скачать изображение не получится
+                    context?.let {
+                        AlertDialog.Builder(it)
+                            .setTitle(getString(R.string.title_access_storage))
+                            .setMessage(
+                                getString(R.string.text_access_storage_denied)
+                            )
+                            .setNegativeButton(getString(R.string.dialog_close)) { dialog, _ -> dialog.dismiss() }
+                            .create()
+                            .show()
+                    }
+                }
+                return
+            }
+        }
     }
 
     private fun showComponents() {
