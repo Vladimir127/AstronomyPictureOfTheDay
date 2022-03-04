@@ -95,18 +95,43 @@ class DetailFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            activity?.onBackPressed()
-            return true
-        } else if (item.itemId == R.id.action_share) {
-            Utils.share(requireContext(), resources, podData)
-            return true
-        } else if (item.itemId == R.id.action_download) {
-            checkPermission()
-            return true
+        when (item.itemId) {
+            android.R.id.home -> {
+                activity?.onBackPressed()
+                return true
+            }
+            R.id.action_share -> {
+                Utils.share(requireContext(), resources, podData)
+                return true
+            }
+            R.id.action_download -> {
+                checkPermission()
+                return true
+            }
+            R.id.action_wallpaper -> {
+                showWallpaperConfirmationDialog()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
+
+    private fun showWallpaperConfirmationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.app_name))
+            .setMessage(
+                getString(R.string.title_set_wallpaper)
+            )
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                Utils.setAsWallpaper(requireContext(), podData)
+            }
+            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
 
     /**
      * Проверяет разрешения для загрузки изображений. При необходимости

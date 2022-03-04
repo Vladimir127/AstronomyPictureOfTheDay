@@ -1,5 +1,6 @@
 package com.example.apod
 
+import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
@@ -9,6 +10,7 @@ import android.os.Environment
 import androidx.core.content.ContextCompat.startActivity
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.net.URL
 
 const val REQUEST_CODE = 42
@@ -57,6 +59,23 @@ object Utils {
                 out.close()
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }.start()
+    }
+
+    fun setAsWallpaper(context: Context, podData: PodServerResponseData?) {
+        val imageUrl = URL(podData?.hdurl)
+
+        Thread {
+            val bitmap = BitmapFactory.decodeStream(
+                imageUrl.openConnection().getInputStream()
+            )
+
+            val wallpaperManager = WallpaperManager.getInstance(context)
+            try {
+                wallpaperManager.setBitmap(bitmap)
+            } catch (ex: IOException) {
+                ex.printStackTrace()
             }
         }.start()
     }

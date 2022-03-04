@@ -55,6 +55,22 @@ class PodFragment : Fragment(), PodContract.View {
             checkPermission()
         }
 
+        binding.imageButtonWallpaper.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.app_name))
+                .setMessage(
+                    getString(R.string.title_set_wallpaper)
+                )
+                .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                    Utils.setAsWallpaper(requireContext(), podData)
+                }
+                .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+        }
+
         // Получаем presenter, сохранённый в методе onRetainCustomNonConfigurationInstance()
         // при пересоздании Activity. Если presenter = null, создаём его заново.
         // TODO: Что такое as с вопросительным знаком?

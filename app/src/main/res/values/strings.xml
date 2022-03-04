@@ -183,4 +183,7 @@
     <string name="text_access_storage_explanation">Чтобы скачивать изображения, пожалуйста, предоставьте приложению доступ к хранилищу</string>
     <string name="dialog_acess_storage_allow">Предоставить доступ</string>
     <string name="dialog_access_storage_deny">Не надо</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="title_set_wallpaper">Установить фото в качестве обоев?</string>
 </resources>
