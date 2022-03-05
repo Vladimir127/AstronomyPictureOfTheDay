@@ -6,8 +6,10 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Typeface
 import android.os.Environment
 import androidx.core.content.ContextCompat.startActivity
+import androidx.preference.PreferenceManager
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -78,5 +80,36 @@ object Utils {
                 ex.printStackTrace()
             }
         }.start()
+    }
+
+    fun getFont(context: Context): Typeface{
+        val resources = context.resources
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+
+        val fontFamily = prefs.getString(resources.getString(R.string.font_key),
+            "montserrat")
+        val fonts: Array<String> =
+            resources.getStringArray(R.array.font_values)
+        var index = -1
+        for (i in fonts.indices) {
+            if (fonts[i] == fontFamily) {
+                index = i
+                break
+            }
+        }
+        val fontPaths: Array<String> =
+            resources.getStringArray(R.array.font_paths)
+        if (index > -1) {
+            val fontPath = fontPaths[index]
+            val font: Typeface = if (index == 0) {
+                Typeface.create(fontPath, Typeface.NORMAL)
+            } else {
+                Typeface.createFromAsset(context.assets, fontPath)
+            }
+
+            return font
+        }
+
+        return Typeface.create(fontPaths[0], Typeface.NORMAL)
     }
 }

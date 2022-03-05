@@ -45,6 +45,8 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initTextViews()
+
         binding.toolbarLayout.title = podData?.title
         binding.detailContainer.textViewDescription.text = podData?.explanation
 
@@ -79,14 +81,17 @@ class DetailFragment : Fragment() {
         initToolBar()
     }
 
+    private fun initTextViews(){
+        val font = Utils.getFont(requireContext())
+        binding.detailContainer.textViewDescription.typeface = font
+        binding.toolbarLayout.setCollapsedTitleTypeface(font)
+        binding.toolbarLayout.setExpandedTitleTypeface(font)
+    }
+
     private fun initToolBar() {
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(
-            true
-        )
-        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(
-            true
-        )
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
         setHasOptionsMenu(true)
     }
 

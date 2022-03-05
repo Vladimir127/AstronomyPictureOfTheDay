@@ -3,6 +3,7 @@ package com.example.apod
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.*
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -83,6 +84,18 @@ class FullScreenFragment : Fragment() {
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         activity.supportActionBar?.setDisplayShowHomeEnabled(true)
         binding.toolbar.title = title
+
+        // Устанавливаем шрифт у Toolbar
+        val font = Utils.getFont(requireContext())
+        for (i in 0 until binding.toolbar.childCount) {
+            val view: View = binding.toolbar.getChildAt(i)
+            if (view is TextView) {
+                if (view.text == binding.toolbar.title) {
+                    view.typeface = font
+                    break
+                }
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

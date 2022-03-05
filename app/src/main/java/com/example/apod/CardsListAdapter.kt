@@ -129,25 +129,32 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     /**
      * ViewHolder для обычного пункта списка, содержащего фото
      */
-    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ImageViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
         fun bind(item: PodServerResponseData?) {
             val imageView = itemView.findViewById<ImageView>(R.id.image_view)
+            val titleTextView =
+                itemView.findViewById<TextView>(R.id.text_view_title)
+            val dateTextView =
+                itemView.findViewById<TextView>(R.id.text_view_date)
 
-            itemView.apply {
-                findViewById<TextView>(R.id.text_view_title).text = item?.title
-                findViewById<TextView>(R.id.text_view_date).text = item?.date
-                findViewById<ImageView>(R.id.image_view).load(item?.url) {
-                    //lifecycle()
-                    error(R.drawable.ic_load_error)
-                    //placeholder(R.drawable.ic_no_photo_vector)
-                }
+            val font = Utils.getFont(itemView.context)
+            titleTextView.typeface = font
+            dateTextView.typeface = font
 
-                ViewCompat.setTransitionName(imageView, "transition_image")
+            titleTextView.text = item?.title
+            dateTextView.text = item?.date
+            imageView.load(item?.url) {
+                //lifecycle()
+                error(R.drawable.ic_load_error)
+                //placeholder(R.drawable.ic_no_photo_vector)
+            }
 
-                setOnClickListener {
-                    if (itemClickListener != null) {
-                        itemClickListener?.onItemClick(item, imageView)
-                    }
+            ViewCompat.setTransitionName(imageView, "transition_image")
+
+            itemView.setOnClickListener {
+                if (itemClickListener != null) {
+                    itemClickListener?.onItemClick(item, imageView)
                 }
             }
         }
@@ -161,12 +168,20 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val videoId = getYouTubeId(item?.url!!) // TODO: Разобраться с null
             val imageUrl = "https://img.youtube.com/vi/$videoId/0.jpg"
 
-            itemView.apply {
-                findViewById<TextView>(R.id.text_view_title).text = item.title
-                findViewById<TextView>(R.id.text_view_date).text = item.date
-                findViewById<ImageView>(R.id.image_view).load(imageUrl) {
-                    error(R.drawable.ic_load_error)
-                }
+            val imageView = itemView.findViewById<ImageView>(R.id.image_view)
+            val titleTextView =
+                itemView.findViewById<TextView>(R.id.text_view_title)
+            val dateTextView =
+                itemView.findViewById<TextView>(R.id.text_view_date)
+
+            val font = Utils.getFont(itemView.context)
+            titleTextView.typeface = font
+            dateTextView.typeface = font
+
+            titleTextView.text = item.title
+            dateTextView.text = item.date
+            imageView.load(imageUrl) {
+                error(R.drawable.ic_load_error)
             }
         }
 

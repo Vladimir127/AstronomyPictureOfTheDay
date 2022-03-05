@@ -1,4 +1,5 @@
 <resources>
+    <!-- Color Preference -->
     <string-array name="color_entries">
         <item>Оранжевый</item>
         <item>Зелёный</item>
@@ -9,5 +10,39 @@
         <item>orange</item>
         <item>green</item>
         <item>blue</item>
+    </string-array>
+
+    <!-- Font Preference -->
+    <string-array name="font_entries">
+        <item>Default</item>
+        <item>Comfortaa</item>
+        <item>KellySlab</item>
+        <item>Marmelad</item>
+        <item>Montserrat</item>
+        <item>Nunito</item>
+        <item>Play</item>
+        <item>Podkova</item>
+    </string-array>
+
+    <string-array name="font_values">
+        <item>default</item>
+        <item>comfortaa</item>
+        <item>kelly_slab</item>
+        <item>marmelad</item>
+        <item>montserrat</item>
+        <item>nunito</item>
+        <item>play</item>
+        <item>podkova</item>
+    </string-array>
+
+    <string-array name="font_paths">
+        <item>sans-serif</item>
+        <item>Comfortaa-Regular.ttf</item>
+        <item>KellySlab-Regular.ttf</item>
+        <item>Marmelad-Regular.ttf</item>
+        <item>Montserrat-Regular.ttf</item>
+        <item>Nunito-Regular.ttf</item>
+        <item>Play-Regular.ttf</item>
+        <item>Podkova-Regular.ttf</item>
     </string-array>
 </resources>
