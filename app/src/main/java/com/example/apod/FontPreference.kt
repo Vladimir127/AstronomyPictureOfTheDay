@@ -42,6 +42,9 @@ class FontPreference(context: Context?, attrs: AttributeSet?) :
             R.layout.font_list_item, fontItems
         )
         adapter.setChecked(index)
+
+        builder.setSingleChoiceItems(adapter, index) {_, _ ->}
+
         val dialog = builder.create()
 
         // Устанавливаем адаптеру обработчик нажатия с помощью колбэка,
