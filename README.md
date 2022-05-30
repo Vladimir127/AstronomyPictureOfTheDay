@@ -24,4 +24,4 @@
 
 ## Скриншоты
 
-<img src="https://user-images.githubusercontent.com/76528795/169294208-85367e15-c577-44d4-be8f-76f178626aa1.png" width="32%"> <img src="https://user-images.githubusercontent.com/76528795/169294570-a83b987e-c4d6-4cff-88ed-1b66f277f3ab.png" width="32%">
+<img src="https://user-images.githubusercontent.com/76528795/171046737-e8dbc61e-2659-4c0c-9088-36ea19109c65.png" width="32%"> <img src="https://user-images.githubusercontent.com/76528795/171046859-3ae4bebd-f562-4020-ae00-9b6e240928ec.png" width="32%"> <img src="https://user-images.githubusercontent.com/76528795/171046816-15f8578f-e28f-40ed-a201-082d9a35a7dd.png" width="32%"> <img src="https://user-images.githubusercontent.com/76528795/171046874-6111c6d9-aa98-4aa0-b2b7-18c25faeeb97.png" width="32%"> <img src="https://user-images.githubusercontent.com/76528795/171046896-272a35ac-0c0c-4894-b901-8e460557998d.png" width="32%"> 
