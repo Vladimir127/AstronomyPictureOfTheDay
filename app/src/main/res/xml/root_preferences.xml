@@ -10,7 +10,7 @@
             app:title="@string/title_dark_mode"
             app:defaultValue="true"/>
 
-        <com.example.apod.ColorPreference
+        <com.example.apod.ui.color.ColorPreference
             app:iconSpaceReserved="false"
             app:defaultValue="blue"
             app:entries="@array/color_entries"
@@ -19,7 +19,7 @@
             app:title="@string/color_title"
             app:useSimpleSummaryProvider="true" />
 
-        <com.example.apod.FontPreference
+        <com.example.apod.ui.font.FontPreference
             app:defaultValue="montserrat"
             app:entries="@array/font_entries"
             app:entryValues="@array/font_values"

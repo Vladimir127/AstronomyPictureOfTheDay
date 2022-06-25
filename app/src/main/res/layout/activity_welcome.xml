@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     android:orientation="vertical"
-    tools:context=".WelcomeActivity">
+    tools:context=".ui.welcome.WelcomeActivity">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
