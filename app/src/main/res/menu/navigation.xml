@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_pod"
+        android:title="@string/navigation_pod"
+        android:icon="@drawable/ic_planet"/>
+
+    <item
+        android:id="@+id/navigation_wikipedia"
+        android:title="@string/navigation_ribbon"
+        android:icon="@drawable/ic_ribbon"/>
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:title="@string/navigation_settings"
+        android:icon="@drawable/ic_settings"/>
+</menu>

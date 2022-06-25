@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ShadowImageButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">@dimen/default_margin_double</item>
+        <item name="android:layout_marginBottom">@dimen/default_margin_double</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">2dp</item>
+    </style>
+</resources>
