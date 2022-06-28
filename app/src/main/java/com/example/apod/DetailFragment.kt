@@ -3,7 +3,13 @@ package com.example.apod
 import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
+import android.graphics.Typeface.BOLD
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -45,8 +51,14 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initTextViews()
+
         binding.toolbarLayout.title = podData?.title
-        binding.detailContainer.textViewDescription.text = podData?.explanation
+
+        val spannable = createSpannableString()
+
+        binding.detailContainer.textViewDescription.text = spannable
+
 
         binding.expandedImage.transitionName = "transition_image"
 
@@ -77,6 +89,61 @@ class DetailFragment : Fragment() {
         }
 
         initToolBar()
+    }
+
+    private fun createSpannableString(): SpannableStringBuilder {
+        // Отображаем заголовок крупным жирным шрифтом
+        val spannable = SpannableStringBuilder(podData?.title)
+        spannable.setSpan(
+            AbsoluteSizeSpan(100),
+            0,
+            spannable.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        spannable.setSpan(
+            StyleSpan(BOLD),
+            0,
+            spannable.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        // Если указан автор, отображаем его не таким крупным и уже не жирным
+        // шрифтом
+        if (podData?.copyright != null) {
+            spannable.append("\n\n" + podData?.copyright)
+
+            spannable.setSpan(
+                AbsoluteSizeSpan(60),
+                spannable.length - podData?.copyright!!.length - 1,
+                spannable.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        // Отображаем дату подчёркнутым шрифтом
+        if (podData?.date != null) {
+            spannable.append("\n\n" + podData?.date)
+
+            spannable.setSpan(
+                UnderlineSpan(),
+                spannable.length - podData?.date!!.length - 1,
+                spannable.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        // Отображаем описание обычным шрифтом
+        spannable.append("\n\n" + podData?.explanation)
+
+        return spannable
+    }
+
+    private fun initTextViews() {
+        val font = Utils.getFont(requireContext())
+        binding.detailContainer.textViewDescription.typeface = font
+        binding.toolbarLayout.setCollapsedTitleTypeface(font)
+        binding.toolbarLayout.setExpandedTitleTypeface(font)
     }
 
     private fun initToolBar() {

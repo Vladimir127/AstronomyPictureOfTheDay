@@ -186,4 +186,7 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="title_set_wallpaper">Установить фото в качестве обоев?</string>
+    <string name="font_style">Стиль шрифта</string>
+    <string name="font_key">font</string>
+    <string name="font_title">Шрифт</string>
 </resources>
