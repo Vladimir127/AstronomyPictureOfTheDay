@@ -3,6 +3,7 @@ package com.example.apod
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
@@ -15,6 +16,7 @@ import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class CardsListFragment : Fragment(), CardsListContract.View {
     private var _binding: FragmentListBinding? = null
@@ -148,6 +150,18 @@ class CardsListFragment : Fragment(), CardsListContract.View {
         val activity = activity as AppCompatActivity
         activity.setSupportActionBar(binding.toolbar)
         binding.toolbar.title = getString(R.string.navigation_ribbon)
+
+        // Устанавливаем шрифт у Toolbar
+        val font = Utils.getFont(requireContext())
+        for (i in 0 until binding.toolbar.childCount) {
+            val view: View = binding.toolbar.getChildAt(i)
+            if (view is TextView) {
+                if (view.text == binding.toolbar.title) {
+                    view.typeface = font
+                    break
+                }
+            }
+        }
     }
 
     fun loadMoreData(){

@@ -36,6 +36,9 @@ class PodFragment : Fragment(), PodContract.View {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPodStartBinding.inflate(inflater, container, false)
+
+        initTextViews()
+
         return binding.root
     }
 
@@ -84,6 +87,19 @@ class PodFragment : Fragment(), PodContract.View {
         presenter = PodPresenter()
         presenter.attach(this)
         presenter.onCreate()
+    }
+
+    /**
+     * Устанавливает элементам TextView шрифт, считанный из настроек
+     */
+    private fun initTextViews() {
+        // Устанавливаем шрифт
+        val font = Utils.getFont(requireContext())
+        binding.textViewAuthor.typeface = font
+        binding.textViewDate.typeface = font
+        binding.textViewDescription.typeface = font
+        binding.textViewShowDescription.typeface = font
+        binding.textViewTitle.typeface = font
     }
 
     /**
