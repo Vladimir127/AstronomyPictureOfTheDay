@@ -2,7 +2,6 @@ package com.example.apod
 
 import android.os.Bundle
 import android.view.View
-import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -105,7 +104,7 @@ class MainActivity : AppCompatActivity(), ColorDialogFragment.Contract {
         ).commitNow()
     }
 
-    override fun changeColor(color: String){
+    override fun changeColor(color: String) {
         val sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(this)
 
