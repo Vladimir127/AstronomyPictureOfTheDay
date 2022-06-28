@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.transition.TransitionInflater
 import coil.api.load
 import com.example.apod.databinding.FragmentDetailBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 private const val ARG_TITLE = "title"
 private const val ARG_DESCRIPTION = "description"
@@ -26,6 +28,11 @@ class DetailFragment : Fragment() {
             description = it.getString(ARG_DESCRIPTION)
             url = it.getString(ARG_URL)
         }
+
+        postponeEnterTransition()
+
+        sharedElementEnterTransition = TransitionInflater.from(requireContext())
+            .inflateTransition(R.transition.shared_image)
     }
 
     override fun onCreateView(
@@ -39,11 +46,33 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarLayout.title = arguments?.getString(ARG_TITLE)
-        binding.detailContainer.textViewDescription.text = arguments?.getString(ARG_DESCRIPTION)
+        binding.toolbarLayout.title = title
+        binding.detailContainer.textViewDescription.text = description
 
-        binding.expandedImage.load(arguments?.getString(ARG_URL)){
-            error(R.drawable.ic_load_error)
+        binding.expandedImage.transitionName = "transition_image"
+
+        binding.expandedImage.apply {
+            load(url){
+                error(R.drawable.ic_load_error)
+                listener (
+                    onError = { _, _ -> startPostponedEnterTransition() },
+                    onSuccess = { _, _ -> startPostponedEnterTransition() }
+                )
+            }
+
+            setOnClickListener{
+                val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.navigation)
+                bottomNavigationView?.visibility = View.GONE
+
+                val fragment = FullScreenFragment.newInstance(title, url)
+
+                activity?.
+                supportFragmentManager?.
+                beginTransaction()?.
+                addToBackStack(null)?.
+                addSharedElement(it, "transition_image")?.
+                replace(R.id.container, fragment)?.commit()
+            }
         }
 
         initToolBar()
@@ -83,7 +112,6 @@ class DetailFragment : Fragment() {
          * @param url Ссылка на изображение
          * @return Новый экземпляр фрагмента DetailFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(title: String?, description: String?, url: String?) =
             DetailFragment().apply {

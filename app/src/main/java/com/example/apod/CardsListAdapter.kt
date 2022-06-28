@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.api.load
 import java.util.regex.Matcher
@@ -120,7 +121,9 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
      * Интерфейс для обработки нажатий
      */
     interface OnItemClickListener {
-        fun onItemClick(item: PodServerResponseData?)
+        // В коллбэк теперь передаём не только объект, но и элемент ImageView
+        // (для анимации)
+        fun onItemClick(item: PodServerResponseData?, imageView: ImageView)
     }
 
     /**
@@ -128,6 +131,8 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
      */
     inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: PodServerResponseData?) {
+            val imageView = itemView.findViewById<ImageView>(R.id.image_view)
+
             itemView.apply {
                 findViewById<TextView>(R.id.text_view_title).text = item?.title
                 findViewById<TextView>(R.id.text_view_date).text = item?.date
@@ -136,9 +141,12 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     error(R.drawable.ic_load_error)
                     //placeholder(R.drawable.ic_no_photo_vector)
                 }
+
+                ViewCompat.setTransitionName(imageView, "transition_image")
+
                 setOnClickListener {
                     if (itemClickListener != null) {
-                        itemClickListener?.onItemClick(item)
+                        itemClickListener?.onItemClick(item, imageView)
                     }
                 }
             }
