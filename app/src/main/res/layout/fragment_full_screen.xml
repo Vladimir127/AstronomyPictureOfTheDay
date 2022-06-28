@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".FullScreenFragment">
+    tools:context=".ui.FullScreenFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -23,7 +23,7 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.example.apod.TouchImageView
+    <com.example.apod.ui.TouchImageView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
