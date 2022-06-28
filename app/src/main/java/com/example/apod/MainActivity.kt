@@ -6,14 +6,15 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.example.apod.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationBarView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ColorDialogFragment.Contract {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        initNightModeAndTheme()
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -22,8 +23,42 @@ class MainActivity : AppCompatActivity() {
 
         initToolbar()
         initNavigation()
+    }
 
-        loadFragment(PodFragment())
+    override fun onResume() {
+        super.onResume()
+
+        val itemId = binding.navigation.selectedItemId
+        chooseFragment(itemId)
+    }
+
+    private fun initNightModeAndTheme() {
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this)
+
+        val nightMode: Boolean =
+            sharedPreferences.getBoolean("night_mode", true)
+        if (nightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(
+                AppCompatDelegate
+                    .MODE_NIGHT_NO
+            )
+        }
+
+        val color = sharedPreferences.getString("color", "blue")
+        when {
+            color.equals("orange") -> {
+                setTheme(R.style.OrangeTheme)
+            }
+            color.equals("green") -> {
+                setTheme(R.style.GreenTheme)
+            }
+            else -> {
+                setTheme(R.style.BlueTheme)
+            }
+        }
     }
 
     private fun initToolbar() {
@@ -33,16 +68,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun initNavigation() {
         binding.navigation.setOnItemSelectedListener(NavigationBarView.OnItemSelectedListener {
-            if (it.itemId == R.id.navigation_pod) {
+            chooseFragment(it.itemId)
+            return@OnItemSelectedListener true
+        })
+    }
+
+    private fun chooseFragment(itemId: Int) {
+        when (itemId) {
+            R.id.navigation_pod -> {
                 loadFragment(PodFragment())
                 binding.toolbar.visibility = View.GONE
-                return@OnItemSelectedListener true
-            } else {
-                loadFragment(ListFragment())
-                binding.toolbar.visibility = View.VISIBLE
-                return@OnItemSelectedListener true
             }
-        })
+            R.id.navigation_wikipedia -> {
+                loadFragment(CardsListFragment())
+                binding.toolbar.apply {
+                    visibility = View.VISIBLE
+                    title = getString(R.string.navigation_ribbon)
+                }
+            }
+            else -> {
+                loadFragment(SettingsFragment())
+                binding.toolbar.apply {
+                    visibility = View.VISIBLE
+                    title = getString(R.string.navigation_settings)
+                }
+            }
+        }
     }
 
     private fun loadFragment(fragment: Fragment) {
@@ -50,5 +101,12 @@ class MainActivity : AppCompatActivity() {
             R.id.container,
             fragment
         ).commitNow()
+    }
+
+    override fun changeColor(color: String){
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this)
+
+        sharedPreferences.edit().putString("color", color).apply()
     }
 }
