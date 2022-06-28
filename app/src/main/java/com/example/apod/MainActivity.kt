@@ -81,12 +81,14 @@ class MainActivity : AppCompatActivity(), ColorDialogFragment.Contract {
             }
             R.id.navigation_wikipedia -> {
                 loadFragment(CardsListFragment())
-                binding.toolbar.apply {
-                    visibility = View.VISIBLE
-                    title = getString(R.string.navigation_ribbon)
-                }
+                binding.toolbar.visibility = View.GONE
             }
             else -> {
+                // TODO: Можно ли и у SettingsFragment сделать свой
+                //  собственный AppBarLayout, а у Activity - совсем его
+                //  убрать (учитывая, что у SettingsFragment не обычный
+                //  макет, а root_preferences.xml с корневым элементом
+                //  PreferenceScreen)?
                 loadFragment(SettingsFragment())
                 binding.toolbar.apply {
                     visibility = View.VISIBLE

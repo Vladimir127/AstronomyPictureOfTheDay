@@ -17,6 +17,7 @@ const val VIEW_TYPE_VIDEO = 2
 class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var data: ArrayList<PodServerResponseData?> = ArrayList()
+    var itemClickListener: OnItemClickListener? = null
 
     fun setData(data: List<PodServerResponseData>) {
         this.data = ArrayList(data)
@@ -111,10 +112,21 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return data.size
     }
 
+    fun setOnItemClickListener(itemClickListener: OnItemClickListener?) {
+        this.itemClickListener = itemClickListener
+    }
+
+    /**
+     * Интерфейс для обработки нажатий
+     */
+    interface OnItemClickListener {
+        fun onItemClick(item: PodServerResponseData?)
+    }
+
     /**
      * ViewHolder для обычного пункта списка, содержащего фото
      */
-    class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: PodServerResponseData?) {
             itemView.apply {
                 findViewById<TextView>(R.id.text_view_title).text = item?.title
@@ -123,6 +135,11 @@ class CardsListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     //lifecycle()
                     error(R.drawable.ic_load_error)
                     //placeholder(R.drawable.ic_no_photo_vector)
+                }
+                setOnClickListener {
+                    if (itemClickListener != null) {
+                        itemClickListener?.onItemClick(item)
+                    }
                 }
             }
         }

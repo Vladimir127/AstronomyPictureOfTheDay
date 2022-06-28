@@ -3,6 +3,7 @@ package com.example.apod
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +32,7 @@ class CardsListFragment : Fragment(), CardsListContract.View {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentListBinding.inflate(inflater, container, false)
+        initToolbar()
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -108,8 +110,30 @@ class CardsListFragment : Fragment(), CardsListContract.View {
     }
 
     private fun initRecyclerView(){
+        // Устанавливаем объекту RecyclerView адаптер и обработчик нажатия
         binding.recyclerView.adapter = adapter
+        adapter.setOnItemClickListener(object : CardsListAdapter
+        .OnItemClickListener{
+            override fun onItemClick(item: PodServerResponseData?) {
+                /*val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("title", item?.title)   // TODO: Вынести в константы
+                intent.putExtra("description", item?.explanation)
+                intent.putExtra("url", item?.url)
 
+                startActivity(intent)*/
+
+                val fragment = DetailFragment.newInstance(item?.title,
+                    item?.explanation, item?.url)
+
+                activity?.supportFragmentManager?.beginTransaction()?.replace(
+                    R.id.container,
+                    fragment
+                )?.commitNow()
+            }
+        })
+
+        // Устанавливаем объекту RecyclerView обработчик прокрутки для
+        // подгрузки дополнительных записей
         val layoutManager = LinearLayoutManager(context)
         binding.recyclerView.layoutManager = layoutManager
 
@@ -120,6 +144,12 @@ class CardsListFragment : Fragment(), CardsListContract.View {
             }
         })
         binding.recyclerView.addOnScrollListener(scrollListener)
+    }
+
+    private fun initToolbar() {
+        val activity = activity as AppCompatActivity
+        activity.setSupportActionBar(binding.toolbar)
+        binding.toolbar.title = getString(R.string.navigation_ribbon)
     }
 
     fun loadMoreData(){
