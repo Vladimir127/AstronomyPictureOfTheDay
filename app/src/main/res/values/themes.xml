@@ -50,4 +50,8 @@
     <style name="Theme.AstronomyPictureOfTheDay.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.AstronomyPictureOfTheDay.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.AstronomyPictureOfTheDay.NoActionBar.Splash">
+        <item name="android:windowBackground">@drawable/splash_background_drawable</item>
+    </style>
 </resources>
