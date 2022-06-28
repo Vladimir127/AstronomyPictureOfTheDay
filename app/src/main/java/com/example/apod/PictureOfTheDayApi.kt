@@ -31,4 +31,19 @@ interface PictureOfTheDayApi {
         @Query("api_key") apiKey: String, @Query("count")
         count: Int
     ): Call<List<PodServerResponseData>>
+
+    /**
+     * Метод, представляющий собой запрос на получение списка фотографий
+     * за определённый период для их отображения в списке карточек.
+     * @param apiKey Ключ API NASA
+     * @param startDate Начальная дата диапазона
+     * @param endDate Конечная дата диапазона
+     * @return Список объектов PODServerResponseData, обёрнутый в Call.
+     */
+    @GET("planetary/apod")
+    fun getPicturesList(
+        @Query("api_key") apiKey: String,
+        @Query("start_date") startDate: String,
+        @Query("end_date") endDate: String
+    ): Call<List<PodServerResponseData>>
 }

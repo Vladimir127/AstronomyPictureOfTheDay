@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), ColorDialogFragment.Contract {
             PreferenceManager.getDefaultSharedPreferences(this)
 
         val nightMode: Boolean =
-            sharedPreferences.getBoolean("night_mode", false)
+            sharedPreferences.getBoolean("night_mode", true)
         if (nightMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
