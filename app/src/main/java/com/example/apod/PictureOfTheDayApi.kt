@@ -19,4 +19,16 @@ interface PictureOfTheDayApi {
     @GET("planetary/apod")
     fun getPictureOfTheDay(@Query("api_key") apiKey: String):
             Call<PodServerResponseData>
+
+    /**
+     * Метод, представляющий собой запрос на получение нескольких фотографий
+     * для их отображения в списке карточек.
+     * Принимает на вход параметры apiKey и count
+     * Возвращает список объектов PODServerResponseData, обёрнутый в Call.
+     */
+    @GET("planetary/apod")
+    fun getPicturesList(
+        @Query("api_key") apiKey: String, @Query("count")
+        count: Int
+    ): Call<List<PodServerResponseData>>
 }
